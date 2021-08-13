@@ -1,0 +1,19 @@
+{
+	"name": "Zalophus",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureMySql",
+		"typeProperties": {
+			"connectionString": "Server=zalophus.mysql.database.azure.com;Port=3306;Database=californianus;UID=zalophusadmin@zalophus;SSLMode=1;UseSystemTrustStore=0",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVault1",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "MySQL-zalophus"
+			}
+		}
+	}
+}

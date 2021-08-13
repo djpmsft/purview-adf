@@ -1,0 +1,20 @@
+{
+	"name": "Phocoenoides",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzurePostgreSql",
+		"typeProperties": {
+			"connectionString": "Host=phocoenoides.postgres.database.azure.com;Port=5432;Database=dali;UID=phocoenoidesadmin@phocoenoides;EncryptionMethod=0",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVault1",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "postgres-phocoenoides",
+				"secretVersion": ""
+			}
+		}
+	}
+}

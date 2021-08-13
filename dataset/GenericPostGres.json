@@ -1,0 +1,13 @@
+{
+	"name": "GenericPostGres",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Phocoenoides",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzurePostgreSqlTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

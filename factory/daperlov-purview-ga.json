@@ -1,0 +1,9 @@
+{
+	"name": "daperlov-purview-ga",
+	"location": "westus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "b4451c9d-5bb4-45d7-af9d-f02f30bbb159",
+		"tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47"
+	}
+}

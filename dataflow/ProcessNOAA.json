@@ -1,0 +1,32 @@
+{
+	"name": "ProcessNOAA",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "DataLake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "NOAA"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ServingLayer",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "AggregateTotals"
+				}
+			],
+			"script": "source(output(\n\t\tpermit_id as integer,\n\t\tyear_issue as integer,\n\t\tname as string,\n\t\thull_id as string,\n\t\towner_name as string,\n\t\towner_phone as string,\n\t\taddress_1 as string,\n\t\taddress_2 as string,\n\t\tcity as string,\n\t\tstate as string,\n\t\tzip as string,\n\t\thome_port as string,\n\t\thome_port_st as string,\n\t\tvessel_lgth as double,\n\t\tvessel_wt_tons as double,\n\t\thorsepower as integer,\n\t\tmax_limit as string,\n\t\tbluefish as string,\n\t\tblack_seabass as string,\n\t\tspiny_dogfish as string,\n\t\tsummer_flounder as string,\n\t\therring as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\tfileSystem: 'raw',\n\tfolderPath: 'phocoenoides/noaa_permits_2019',\n\tfileName: 'data_b8e6e235-a3ea-469f-923c-a89f4ff1e9ed_b694cb6a-2a0c-439a-8e9c-f1c2a726605a.parquet') ~> NOAA\nNOAA aggregate(groupBy(year_issue,\n\t\tstate),\n\tbluefish = sum(toInteger(bluefish)),\n\t\tblack_seabass = sum(toInteger(black_seabass)),\n\t\tspiny_dogfish = sum(toInteger(spiny_dogfish)),\n\t\tsummer_flounder = sum(toInteger(summer_flounder))) ~> AggregateTotals\nAggregateTotals sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+		}
+	}
+}

@@ -1,0 +1,19 @@
+{
+	"name": "Enhydra",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"connectionString": "Integrated Security=False;Data Source=enhydra;Initial Catalog=lutris;User ID=enhydra-admin",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVault1",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "SQL-enhydra-lutris"
+			}
+		}
+	}
+}
