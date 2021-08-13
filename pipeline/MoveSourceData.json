@@ -34,11 +34,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "AzurePostgreSqlSource",
-									"query": {
-										"value": "SELECT * FROM @{item().TABLE_SCHEMA}.@{item().TABLE_NAME}",
-										"type": "Expression"
-									}
+									"type": "AzurePostgreSqlSource"
 								},
 								"sink": {
 									"type": "ParquetSink",
@@ -62,7 +58,17 @@
 							"inputs": [
 								{
 									"referenceName": "GenericPostGres",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"schema": {
+											"value": "@item().TABLE_SCHEMA",
+											"type": "Expression"
+										},
+										"table": {
+											"value": "@item().TABLE_NAME",
+											"type": "Expression"
+										}
+									}
 								}
 							],
 							"outputs": [
