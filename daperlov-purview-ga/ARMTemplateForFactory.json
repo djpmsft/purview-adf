@@ -600,7 +600,7 @@
 					"location": {
 						"type": "AzureBlobFSLocation",
 						"folderPath": {
-							"value": "@concat('cycling/north-america',dataset().Folder)",
+							"value": "@concat('cycling/north-america/',dataset().Folder)",
 							"type": "Expression"
 						},
 						"fileSystem": "curated"
