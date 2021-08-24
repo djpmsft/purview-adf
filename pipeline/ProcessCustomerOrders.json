@@ -1,6 +1,40 @@
 {
 	"name": "ProcessCustomerOrders",
 	"properties": {
+		"activities": [
+			{
+				"name": "CustomerOrders",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "CustomerOrders",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"WriteToCurated": {
+								"Folder": "customer-orders"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "AdventureWorks"
+		},
 		"annotations": []
 	}
 }
