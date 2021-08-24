@@ -1,0 +1,33 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "daperlov-purview-ga"
+		},
+		"DataLake_accountKey": {
+			"value": ""
+		},
+		"Enhydra_connectionString": {
+			"value": ""
+		},
+		"Phocoenoides_connectionString": {
+			"value": ""
+		},
+		"Zalophus_connectionString": {
+			"value": ""
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://bug-bash-kv.vault.azure.net/"
+		},
+		"DataLake_properties_typeProperties_url": {
+			"value": "https://daperlovpurviewadls.dfs.core.windows.net"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
