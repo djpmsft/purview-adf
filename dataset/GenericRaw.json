@@ -8,6 +8,9 @@
 		"parameters": {
 			"Folder": {
 				"type": "string"
+			},
+			"File": {
+				"type": "string"
 			}
 		},
 		"annotations": [],
@@ -15,6 +18,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat(dataset().File, '.parquet')",
+					"type": "Expression"
+				},
 				"folderPath": {
 					"value": "@dataset().Folder",
 					"type": "Expression"
