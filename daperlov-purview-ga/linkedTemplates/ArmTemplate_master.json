@@ -23,6 +23,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Zalophus'"
 		},
+		"AdventureWorks_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AdventureWorks'"
+		},
 		"AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://bug-bash-kv.vault.azure.net/"
@@ -60,6 +64,9 @@
 					},
 					"DataLake_accountKey": {
 						"value": "[parameters('DataLake_accountKey')]"
+					},
+					"AdventureWorks_connectionString": {
+						"value": "[parameters('AdventureWorks_connectionString')]"
 					},
 					"Enhydra_connectionString": {
 						"value": "[parameters('Enhydra_connectionString')]"

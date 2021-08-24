@@ -17,6 +17,9 @@
 		"Zalophus_connectionString": {
 			"value": ""
 		},
+		"AdventureWorks_connectionString": {
+			"value": ""
+		},
 		"AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"value": "https://bug-bash-kv.vault.azure.net/"
 		},
