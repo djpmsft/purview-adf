@@ -464,6 +464,154 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AdventureWorks')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CustomerOrders')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "AdventureWorks"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "AdventureWorks",
+								"type": "LinkedServiceReference"
+							},
+							"name": "SalesOrderHeader"
+						},
+						{
+							"linkedService": {
+								"referenceName": "AdventureWorks",
+								"type": "LinkedServiceReference"
+							},
+							"name": "SalesOrderDetail"
+						},
+						{
+							"linkedService": {
+								"referenceName": "AdventureWorks",
+								"type": "LinkedServiceReference"
+							},
+							"name": "Product"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "CuratedSink",
+								"type": "DatasetReference"
+							},
+							"name": "WriteToCurated"
+						}
+					],
+					"transformations": [
+						{
+							"name": "JoinSalesOrderHeaderAndDetail"
+						},
+						{
+							"name": "JoinProductAndSalesOrder"
+						},
+						{
+							"name": "FilterOutColumns"
+						}
+					],
+					"script": "source(output(\n\t\tSalesOrderID as integer,\n\t\tRevisionNumber as integer,\n\t\tOrderDate as timestamp,\n\t\tDueDate as timestamp,\n\t\tShipDate as timestamp,\n\t\tStatus as integer,\n\t\tOnlineOrderFlag as boolean,\n\t\tSalesOrderNumber as string,\n\t\tPurchaseOrderNumber as string,\n\t\tAccountNumber as string,\n\t\tCustomerID as integer,\n\t\tShipToAddressID as integer,\n\t\tBillToAddressID as integer,\n\t\tShipMethod as string,\n\t\tCreditCardApprovalCode as string,\n\t\tSubTotal as decimal(19,4),\n\t\tTaxAmt as decimal(19,4),\n\t\tFreight as decimal(19,4),\n\t\tTotalDue as decimal(19,4),\n\t\tComment as string,\n\t\trowguid as string,\n\t\tModifiedDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tstore: 'sqlserver',\n\tschemaName: 'SalesLT',\n\ttableName: 'SalesOrderHeader',\n\tisolationLevel: 'READ_UNCOMMITTED') ~> SalesOrderHeader\nsource(output(\n\t\tSalesOrderID as integer,\n\t\tSalesOrderDetailID as integer,\n\t\tOrderQty as short,\n\t\tProductID as integer,\n\t\tUnitPrice as decimal(19,4),\n\t\tUnitPriceDiscount as decimal(19,4),\n\t\tLineTotal as decimal(38,6),\n\t\trowguid as string,\n\t\tModifiedDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tstore: 'sqlserver',\n\tschemaName: 'SalesLT',\n\ttableName: 'SalesOrderDetail',\n\tisolationLevel: 'READ_UNCOMMITTED') ~> SalesOrderDetail\nsource(output(\n\t\tProductID as integer,\n\t\tName as string,\n\t\tProductNumber as string,\n\t\tColor as string,\n\t\tStandardCost as decimal(19,4),\n\t\tListPrice as decimal(19,4),\n\t\tSize as string,\n\t\tWeight as decimal(8,2),\n\t\tProductCategoryID as integer,\n\t\tProductModelID as integer,\n\t\tSellStartDate as timestamp,\n\t\tSellEndDate as timestamp,\n\t\tDiscontinuedDate as timestamp,\n\t\tThumbNailPhoto as binary,\n\t\tThumbnailPhotoFileName as string,\n\t\trowguid as string,\n\t\tModifiedDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tstore: 'sqlserver',\n\tschemaName: 'SalesLT',\n\ttableName: 'Product',\n\tisolationLevel: 'READ_UNCOMMITTED') ~> Product\nSalesOrderHeader, JoinProductAndSalesOrder join(SalesOrderHeader@SalesOrderID == SalesOrderDetail@SalesOrderID,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> JoinSalesOrderHeaderAndDetail\nSalesOrderDetail, Product join(SalesOrderDetail@ProductID == Product@ProductID,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> JoinProductAndSalesOrder\nJoinSalesOrderHeaderAndDetail select(mapColumn(\n\t\tCustomerID,\n\t\tOrderQty,\n\t\tName,\n\t\tListPrice\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FilterOutColumns\nFilterOutColumns sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> WriteToCurated"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AdventureWorks')]",
+				"[concat(variables('factoryId'), '/datasets/CuratedSink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ProcessCustomerOrders')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CustomerOrders",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "CustomerOrders",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"SalesOrderHeader": {},
+									"SalesOrderDetail": {},
+									"Product": {},
+									"WriteToCurated": {
+										"Folder": "customer-orders"
+									}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "AdventureWorks"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/CustomerOrders')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CuratedSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DataLake",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Folder": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@concat('cycling/north-america',dataset().Folder)",
+							"type": "Expression"
+						},
+						"fileSystem": "curated"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DataLake')]"
+			]
 		}
 	]
 }
